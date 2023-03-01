@@ -1,4 +1,4 @@
-<php>
-    trololololo
+<?php>   
 
-</php>
+
+?>
