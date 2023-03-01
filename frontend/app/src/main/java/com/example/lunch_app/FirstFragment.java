@@ -1,5 +1,6 @@
 package com.example.lunch_app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +20,7 @@ import java.util.List;
 public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
-    String []data = {"Hello","Hii","Welcome"};
+    Integer []data = {R.drawable.stamp};
     int counter = 0;
 
     @Override
@@ -36,18 +37,23 @@ public class FirstFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        List<String> items = new LinkedList<>();
+        List<Integer> items = new LinkedList<>();
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         DemoAdapter adapter = new DemoAdapter(items);
         recyclerView.setAdapter(adapter);
 
+        Intent fetchData = getActivity().getIntent();
+        String string = fetchData.getStringExtra("String");
         binding.Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                items.add(data[counter%3]);
+                items.add(data[counter]);
                 counter++;
+                if (counter == data.length){
+                    counter = 0;
+                }
                 adapter.notifyItemInserted(items.size()-1);
                 if (items.size() > 10){
                     counter = 0;

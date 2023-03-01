@@ -1,5 +1,6 @@
 package com.example.lunch_app;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -61,7 +62,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            Intent getin = new Intent(MainActivity.this, Camera.class);
+            MainActivity.this.startActivity(getin);
         }
 
         return super.onOptionsItemSelected(item);

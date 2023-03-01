@@ -3,6 +3,7 @@ package com.example.lunch_app;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,9 +12,9 @@ import java.util.List;
 
 public class DemoAdapter extends RecyclerView.Adapter<DemoVH>{
 
-    List<String> items;
+    List<Integer> items;
 
-    public DemoAdapter(List<String> items){
+    public DemoAdapter(List<Integer> items){
         this.items = items;
     }
 
@@ -27,7 +28,7 @@ public class DemoAdapter extends RecyclerView.Adapter<DemoVH>{
 
     @Override
     public void onBindViewHolder(@NonNull DemoVH holder, int position) {
-        holder.textview.setText(items.get(position));
+        holder.imageview.setImageAlpha(items.get(position));
     }
 
     @Override
@@ -38,13 +39,13 @@ public class DemoAdapter extends RecyclerView.Adapter<DemoVH>{
 
 class DemoVH extends RecyclerView.ViewHolder{
 
-    TextView textview;
+    ImageView imageview;
     private DemoAdapter adapter;
 
     public DemoVH(@NonNull View itemView) {
         super(itemView);
 
-        textview = itemView.findViewById(R.id.text);
+        imageview = itemView.findViewById(R.id.image);
     }
 
     public DemoVH linkAdapter(DemoAdapter adapter){
