@@ -14,7 +14,7 @@
         android:theme="@style/Theme.Lunchapp"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".Login"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Lunchapp.NoActionBar">
@@ -24,9 +24,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MainActivity"/>
+        <activity android:name=".AddPerson"/>
         <activity android:name=".Camera"
             android:exported="true"
-            android:label="camera"/>
+            android:label="camera">
+        </activity>
+        <style android:name="Theme.Lunchapp" android:parent="Theme.AppCompat.Light.NoActionBar">
+            <item android:name="windowActionBar">false</item>
+        </style>
     </application>
 
 </manifest>
