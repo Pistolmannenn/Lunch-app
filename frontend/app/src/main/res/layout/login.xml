@@ -17,7 +17,7 @@
             android:layout_width="210dp"
             android:layout_height="45dp"
             android:fontFamily="sans-serif-black"
-            android:text="Lunch app"
+            android:text="    Lunch app"
             android:textSize="34sp"
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -99,7 +99,7 @@
 
         <Button
             android:id="@+id/forgot"
-            android:layout_width="88dp"
+            android:layout_width="100dp"
             android:layout_height="50dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="118dp"
@@ -112,7 +112,7 @@
 
         <Button
             android:id="@+id/newlogin"
-            android:layout_width="88dp"
+            android:layout_width="105dp"
             android:layout_height="50dp"
             android:layout_marginStart="-100dp"
             android:text="Registrera dig"
