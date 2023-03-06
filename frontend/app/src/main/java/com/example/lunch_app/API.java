@@ -47,9 +47,10 @@ public class API extends Activity {
         @Override
         protected void onPostExecute(String responseData){
             if (responseData != null){
+                //textView.setText(responseData);
                 try{
                     JSONObject responseJson = new JSONObject(responseData);
-                    String title = responseJson.getString("User");
+                    String title = responseJson.getString("userId");
                     textView.setText(title);
                 }
                 catch (JSONException e){

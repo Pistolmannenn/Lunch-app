@@ -20,17 +20,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Camera"
+        android:text="Take picture"
         app:layout_constraintTop_toBottomOf="@+id/text"
         tools:layout_editor_absoluteX="16dp" />
 
-    <ImageView
-        android:id="@+id/imageview1"
+    <TextureView
+        android:id="@+id/view_finder"
         android:layout_width="396dp"
         android:layout_height="541dp"
         android:layout_below="@+id/btncamera_id"
-        app:layout_constraintTop_toBottomOf="@+id/btncamera_id"
-        tools:layout_editor_absoluteX="0dp" />
+        android:layout_marginTop="36dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btncamera_id" />
 
     <TextView
         android:id="@+id/textView_id"

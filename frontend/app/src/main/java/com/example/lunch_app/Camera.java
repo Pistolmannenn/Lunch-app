@@ -5,8 +5,16 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.TextureView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.NotFoundException;
@@ -14,30 +22,15 @@ import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.provider.MediaStore;
-import android.view.View;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class Camera extends AppCompatActivity {
+    private int REQUEST_CODE_PERMISSIONS = 101;
+    private String[] REQUIRED_PERMISSONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
     private static final int REQUEST_CODE = 22;
+    TextureView textureView;
     Button btnpicture;
     ImageView imageView;
 
@@ -46,14 +39,14 @@ public class Camera extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera);
         btnpicture = findViewById(R.id.btncamera_id);
-        imageView = findViewById(R.id.imageview1);
+        textureView = findViewById(R.id.view_finder);
 
 
         btnpicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-               startActivityForResult(cameraIntent, REQUEST_CODE);
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, REQUEST_CODE);
             }
         });
     }

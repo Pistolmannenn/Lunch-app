@@ -83,7 +83,7 @@ public class FirstFragment extends Fragment {
         binding.Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent getin = new Intent(getActivity(), Camera.class);
+                Intent getin = new Intent(getActivity(), CameraActivity.class);
                 getActivity().startActivity(getin);
             }
         });
