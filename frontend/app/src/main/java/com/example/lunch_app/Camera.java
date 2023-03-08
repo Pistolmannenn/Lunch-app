@@ -10,7 +10,9 @@ import android.graphics.Matrix;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Rational;
 import android.util.Size;
 import android.view.Surface;
@@ -20,12 +22,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+import java.util.concurrent.Executor;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraX;
 import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageProxy;
 import androidx.camera.core.ImageCaptureConfig;
 import androidx.camera.core.Preview;
 import androidx.camera.core.PreviewConfig;
@@ -45,7 +48,6 @@ import java.io.IOException;
 
 public class Camera extends AppCompatActivity {
     private int REQUEST_CODE_PERMISSIONS = 101;
-    private String[] REQUIRED_PERMISSONS = new String[]{"android.permission.CAMERA", "android.permission.WRITE_EXTERNAL_STORAGE"};
     private static final int REQUEST_CODE = 22;
     TextureView textureView;
     Button btnpicture;
@@ -86,15 +88,9 @@ public class Camera extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.camera);
         //btnpicture = findViewById(R.id.btncamera_id);
-        textureView = (TextureView) findViewById(R.id.view_finder);
+        textureView = findViewById(R.id.view_finder);
 
-        if(allPermissionGranted()){
-                // Permission already granted, start the camera
-                startCamera();
-        }
-        else{
-            ActivityCompat.requestPermissions(this, REQUIRED_PERMISSONS, REQUEST_CODE_PERMISSIONS);
-        }
+        startCamera();
 
         PackageManager packageManager = this.getPackageManager();
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
@@ -111,6 +107,22 @@ public class Camera extends AppCompatActivity {
         });*/
     }
 
+    private void saveImage(Bitmap bitmap) throws IOException {
+        // Create a file to save the image
+        File file = new File(getExternalFilesDir(null), "image.jpg");
+        FileOutputStream outputStream = new FileOutputStream(file);
+
+        // Compress the bitmap and save it to the file
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+        outputStream.flush();
+        outputStream.close();
+
+        // Notify the gallery about the new image
+        Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        intent.setData(Uri.fromFile(file));
+        sendBroadcast(intent);
+    }
+
     private void startCamera() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -120,7 +132,7 @@ public class Camera extends AppCompatActivity {
             return;
         }
 
-        CameraX.unbindAll();
+        CameraX.getCameraControl().clearBindings();
 
         Rational aspectRatio = new Rational(textureView.getWidth(), textureView.getHeight());
         Size screen = new Size(textureView.getWidth(), textureView.getHeight());
@@ -149,22 +161,22 @@ public class Camera extends AppCompatActivity {
         findViewById(R.id.btncamera_id).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                File file = new File("sdcard/photos/DCIM(0)/Camera/CameraX_" + System.currentTimeMillis());
-                imgCap.takePicture(file, new ImageCapture.OnImageSavedListener() {
+                imgCap.takePicture(new ImageCapture.OnImageCapturedListener() {
                     @Override
-                    public void onImageSaved(@NonNull File file) {
-                        String msg = "Pic captured at " + file.getAbsolutePath();
-                        Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onError(@NonNull ImageCapture.UseCaseError useCaseError, @NonNull String message, @Nullable Throwable cause) {
-                        String msg = "Pic captured failed: " + message;
-                        Toast.makeText(getBaseContext(), msg, Toast.LENGTH_LONG).show();
-
-                        if(cause != null){
-                            cause.printStackTrace();
+                    public void onCaptureSuccess(ImageProxy imageProxy, final int rotationDegrees) {
+                        super.onCaptureSuccess(imageProxy, rotationDegrees);
+                        Bitmap bitmap = textureView.getBitmap();
+                        try {
+                            saveImage(bitmap);
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
+                        imgCap.clearBindings();
+                    }
+                }, new Executor() {
+                    @Override
+                    public void execute(Runnable runnable) {
+                        runnable.run();
                     }
                 });
             }
@@ -211,51 +223,51 @@ public class Camera extends AppCompatActivity {
         textureView.setTransform(mx);
     }
 
-    private boolean allPermissionGranted() {
-        for(String permission : REQUIRED_PERMISSONS){
-            if(ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED){
-                return false;
-            }
-        }
-        return true;
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
-        if(requestCode == REQUEST_CODE && resultCode == RESULT_OK){
-            Bitmap photo = (Bitmap) data.getExtras().get("data");
+        if(requestCode == REQUEST_CODE && resultCode == RESULT_OK && data != null){
+            Bundle extras = data.getExtras();
+            if(extras != null){
+                Bitmap photo = (Bitmap) extras.get("data");
+                if(photo != null){
+                    String picName = "photo.jpg";
+                    try (FileOutputStream out = openFileOutput(picName, Context.MODE_PRIVATE)) {
+                        photo.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-            String picName = "photo.jpg";
-            try (FileOutputStream out = openFileOutput(picName, Context.MODE_PRIVATE)){
-                photo.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            } catch (IOException e){
-                e.printStackTrace();
-            }
+                    File file = new File(getFilesDir(), picName);
+                    if (file.exists()) {
+                        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+                        textureView.setImageBitmap(bitmap);
 
-            File file = new File(getFilesDir(), picName);
-            if (file.exists()){
-                Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
-                imageView.setImageBitmap(bitmap);
+                        MultiFormatReader reader = new MultiFormatReader();
+                        try {
+                            int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
+                            photo.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+                            RGBLuminanceSource source = new RGBLuminanceSource(bitmap.getWidth(), bitmap.getHeight(), pixels);
+                            BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(source));
+                            Result result = reader.decode(binaryBitmap);
+                            String qrCodeData = result.getText();
+                            Intent getData = new Intent(Camera.this, MainActivity.class);
+                            getData.putExtra("String", qrCodeData);
+                            Camera.this.startActivity(getData);
+                        } catch (NotFoundException e) {
+                            Toast.makeText(this, "No QR code found in the image", Toast.LENGTH_SHORT).show();
+                        }
 
-                MultiFormatReader reader = new MultiFormatReader();
-                try {
-                    int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
-                    photo.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-                    RGBLuminanceSource source = new RGBLuminanceSource(bitmap.getWidth(), bitmap.getHeight(), pixels);
-                    BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(source));
-                    Result result = reader.decode(binaryBitmap);
-                    String qrCodeData = result.getText();
-                    Intent getData = new Intent(Camera.this, MainActivity.class);
-                    getData.putExtra("String", qrCodeData);
-                    Camera.this.startActivity(getData);
-                } catch (NotFoundException e) {
-                    Toast.makeText(this, "No QR code found in the image", Toast.LENGTH_SHORT).show();
+                        file.delete();
+                    }
                 }
-
-                file.delete();
+                else{
+                    Toast.makeText(this, "OOPs, Error", Toast.LENGTH_SHORT).show();
+                }
             }
-
+            else{
+                Toast.makeText(this, "No photo taken", Toast.LENGTH_SHORT).show();
+            }
         }
         else{
             Toast.makeText(this, "Cancelled", Toast.LENGTH_SHORT).show();

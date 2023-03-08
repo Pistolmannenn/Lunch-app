@@ -21,7 +21,8 @@
             android:name=".Login"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Lunchapp.NoActionBar">
+            android:theme="@style/Theme.Lunchapp.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -29,12 +30,16 @@
         </activity>
 
         <activity android:name=".MainActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".AddPerson"/>
-        <activity android:name=".API"/>
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".AddPerson"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".API"
+            android:screenOrientation="portrait"/>
         <activity android:name=".Camera"
             android:exported="true"
-            android:label="camera">
+            android:label="camera"
+            android:screenOrientation="portrait">
         </activity>
 
     </application>
