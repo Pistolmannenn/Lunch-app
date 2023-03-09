@@ -3,13 +3,13 @@
 
     // how to save PNG codes to server
     
-    $tempDir = "codes/";
+    $tempDir = "qr/codes/";
 
-    $codeContents = 'Token +1';
+    $codeContents = "La ".$userID;
     
     // we need to generate filename somehow, 
     // with md5 or with database ID used to obtains $codeContents...
-    $fileName = '005_file_'.md5($codeContents).'.png';
+    $fileName = 'User_file_'.md5($codeContents).'.png';
     
     $pngAbsoluteFilePath = $tempDir.$fileName;
     $urlRelativeFilePath = $tempDir.$fileName;
@@ -23,12 +23,6 @@
         echo 'File already generated! We can use this cached file to speed up site on common codes!';
         echo '<hr />';
     }
-    
-    echo 'Server PNG File: '.$pngAbsoluteFilePath;
-    echo '<hr />';
-    
-    // displaying
-    echo '<img src="'.$urlRelativeFilePath.'" />';
 ?>
 
 <?php
