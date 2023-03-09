@@ -40,7 +40,6 @@ public class Camera extends AppCompatActivity {
     private static final int REQUEST_CODE = 22;
     Button btnpicture;
     ImageView imageView;
-    TextView textview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -48,7 +47,7 @@ public class Camera extends AppCompatActivity {
         setContentView(R.layout.camera);
         btnpicture = findViewById(R.id.btncamera_id);
         imageView = findViewById(R.id.imageview1);
-        textview = findViewById(R.id.textView_id);
+
 
         btnpicture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +60,6 @@ public class Camera extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        int token = 0;
         if(requestCode == REQUEST_CODE && resultCode == RESULT_OK){
             Bitmap photo = (Bitmap) data.getExtras().get("data");
 
@@ -85,16 +83,9 @@ public class Camera extends AppCompatActivity {
                     BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(source));
                     Result result = reader.decode(binaryBitmap);
                     String qrCodeData = result.getText();
-                    Intent getData = new Intent(Camera.this, FirstFragment.class);
+                    Intent getData = new Intent(Camera.this, MainActivity.class);
                     getData.putExtra("String", qrCodeData);
                     Camera.this.startActivity(getData);
-                    /*if (qrCodeData.equals("Token +1")){
-                        token++;
-                    }
-                    else {
-                        textview.setText(qrCodeData);
-                    }
-                    textview.setText(String.valueOf(token));*/
                 } catch (NotFoundException e) {
                     Toast.makeText(this, "No QR code found in the image", Toast.LENGTH_SHORT).show();
                 }
