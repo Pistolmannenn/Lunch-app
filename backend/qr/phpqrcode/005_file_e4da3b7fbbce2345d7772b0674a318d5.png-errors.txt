@@ -1,0 +1,6 @@
+2023-03-06 10:24:18: <br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>C:\xampp\htdocs\GitFiles\Lunch-app\backend\qr\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>C:\xampp\htdocs\GitFiles\Lunch-app\backend\qr\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>C:\xampp\htdocs\GitFiles\Lunch-app\backend\qr\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
