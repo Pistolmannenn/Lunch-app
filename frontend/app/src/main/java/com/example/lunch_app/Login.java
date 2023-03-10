@@ -3,7 +3,6 @@ package com.example.lunch_app;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -25,7 +24,7 @@ public class Login extends AppCompatActivity {
 
         binding = LoginBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(view);
 
         if (getSupportActionBar() != null) {

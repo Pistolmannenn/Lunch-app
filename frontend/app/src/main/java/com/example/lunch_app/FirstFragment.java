@@ -1,5 +1,6 @@
 package com.example.lunch_app;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,12 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lunch_app.databinding.FragmentFirstBinding;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +46,7 @@ public class FirstFragment extends Fragment {
 
         List<Integer> items = new LinkedList<>();
         TextView textview = view.findViewById(R.id.textView_id);
+        TextView textview2 = view.findViewById(R.id.text);
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -53,7 +58,6 @@ public class FirstFragment extends Fragment {
 
         Intent fetchData = getActivity().getIntent();
         String string = fetchData.getStringExtra("String");
-        textview.setText(string);
 
         if (string != null && string.equals("Token +1")){
                 counter++;
@@ -61,6 +65,7 @@ public class FirstFragment extends Fragment {
         }
 
         textview.setText(String.valueOf(counter));
+        textview2.setText(string);
 
         items.clear();
         for (int i = 0; i < counter; i++){
@@ -83,11 +88,26 @@ public class FirstFragment extends Fragment {
         binding.Add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent getin = new Intent(getActivity(), Camera.class);
-                getActivity().startActivity(getin);
+                scanCode();
             }
         });
     }
+
+    private void scanCode() {
+        ScanOptions options = new ScanOptions();
+        options.setBeepEnabled(true);
+        options.setOrientationLocked(true);
+        options.setCaptureActivity(CaptureAct.class);
+        barLauncher.launch(options);
+    }
+
+    ActivityResultLauncher<ScanOptions> barLauncher = registerForActivityResult(new ScanContract(), result->{
+        if(result.getContents() != null){
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.putExtra("String", result.getContents());
+            getActivity().startActivity(intent);
+        }
+    });
 
     @Override
     public void onDestroyView() {
